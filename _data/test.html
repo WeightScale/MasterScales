@@ -35,8 +35,6 @@
     </style>
     <script>
         var w;
-        var d = document;
-        var  ob = [];
 
         function ScalesSocket(h, p, fm, fe) {
             var host = h;
@@ -78,59 +76,49 @@
         }
 
         function go() {
-            d.getElementById('weight').innerHTML = '---';
-            d.getElementById('buttonZero').style.visibility = 'visible';
+            document.getElementById('weight').innerHTML = '---';
+            document.getElementById('buttonZero').style.visibility = 'visible';
         }
 
         function setZero() {
-            d.getElementById('buttonZero').style.visibility = 'hidden';
-            var r = new XMLHttpRequest();
-            d.getElementById('weight').innerHTML = '...';
-            r.onreadystatechange = function() {
+            document.getElementById('buttonZero').style.visibility = 'hidden';
+            var request = new XMLHttpRequest();
+            document.getElementById('weight').innerHTML = '...';
+            request.onreadystatechange = function() {
                 if (this.readyState === 4 && this.status === 204) {
-                    d.getElementById('buttonZero').style.visibility = 'visible';
+                    document.getElementById('buttonZero').style.visibility = 'visible';
                     w.getWeight();
                 }
             };
-            r.open('GET', '/tp', true);
-            r.timeout = 5000;
-            r.ontimeout = function() {
+            request.open('GET', '/tp', true);
+            request.timeout = 5000;
+            request.ontimeout = function() {
                 go();
             };
-            r.onerror = function() {
+            request.onerror = function() {
                 go();
             };
-            r.send(null);
+            request.send(null);
         }
-
-        function createList(p,a) {
-            d.getElementById(p).innerHTML = '';
-            var t = "<th class='th'>время</th><th class='th'>вес</th>";
-            let tr = d.createElement('tr');
-            tr.innerHTML = t;
-            d.getElementById(p).appendChild(tr);
-            a.forEach(function (o) {
-                var row = d.createElement('tr');
-                row.innerHTML = "<td style='color: forestgreen' class='td'><i/>" + o.d.split("-")[1] + "</td><td width='auto' class='td'><i/><b/>" + o.v + "</td>";
-                d.getElementById(p).appendChild(row);
-            });
-        }
+        window.onload = function() {
+            onBodyLoad();
+        };
 
         function onBodyLoad() {
-            w = new ScalesSocket('ws://' + d.location.host + '/ws', ['arduino'], function(e) {
+            w = new ScalesSocket('ws://' + document.location.host + '/ws', ['arduino'], function(e) {
                 if (e.hasOwnProperty('cmd')) {
                     switch (e.cmd) {
                         case 'wt':
                             try {
-                                d.getElementById('weight').innerHTML = e.w;
-                                d.getElementById('mw_id').innerHTML = e.ms.w;
-                                d.getElementById('sw_id').innerHTML = e.sl.w;
-                                d.getElementById('mc_id').innerHTML = e.ms.c + '%';
-                                d.getElementById('sc_id').innerHTML = e.sl.c + '%';
+                                document.getElementById('weight').innerHTML = e.w;
+                                document.getElementById('mw_id').innerHTML = e.ms.w;
+                                document.getElementById('sw_id').innerHTML = e.sl.w;
+                                document.getElementById('mc_id').innerHTML = e.ms.c + '%';
+                                document.getElementById('sc_id').innerHTML = e.sl.c + '%';
                                 if (e.ms.s && e.sl.s) {
-                                    d.getElementById('w_style').setAttribute('style', 'background: #fff;');
+                                    document.getElementById('w_style').setAttribute('style', 'background: #fff;');
                                 } else {
-                                    d.getElementById('w_style').setAttribute('style', 'background: #C4C4C4;');
+                                    document.getElementById('w_style').setAttribute('style', 'background: #C4C4C4;');
                                 }
                             } catch (e) {
                                 go();
@@ -139,10 +127,6 @@
                             }
                             break;
                         case 'swt':
-                            var date = new Date();
-                            var dt = date.toLocaleDateString() + "-" + date.toLocaleTimeString();
-                            dt.replace(/[^\x20-\x7E]+/g, '');
-                            e.d = dt;
                             ob.unshift(e);
                             if (ob.length > 5 )
                                 ob.pop();
@@ -160,10 +144,6 @@
             });
             w.openSocket();
         }
-
-        window.onload = function() {
-            onBodyLoad();
-        };
     </script>
 </head>
 
@@ -189,9 +169,12 @@
     </tr>
 </table>
 <hr>
-<table id='tw_id'>
-</table>
 <table>
+    <tr>
+        <td><a href='/events.html' class='btn btn--m btn--blue'>события</a>
+            <br>
+        </td>
+    </tr>
     <tr>
         <td>
             <br/><a href='/settings.html'>настройки</a>

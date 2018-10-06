@@ -1,11 +1,13 @@
 #include <ESP8266WiFi.h>
-//#include <ESP8266mDNS.h>
+#include <functional>
 #include "BrowserServer.h"
 #include "ESP8266NetBIOS.h" 
 #include "Core.h"
 #include "Task.h"
 #include "HttpUpdater.h"
 
+using namespace std;
+using namespace std::placeholders;
 /*
  * This example serves a "hello world" on a WLAN and a SoftAP at the same time.
  * The SoftAP allow you to configure WLAN parameters at run time. They are not setup in the sketch but saved on EEPROM.
@@ -20,14 +22,14 @@
 
 void onStationModeConnected(const WiFiEventStationModeConnected& evt);
 void onStationModeDisconnected(const WiFiEventStationModeDisconnected& evt);
-void takeBlink();
+//void takeBlink();
 void takeBattery();
 void takeWeight();
 void powerSwitchInterrupt();
 void connectWifi();
 //
 TaskController taskController = TaskController();		/*  */
-Task taskBlink(takeBlink, 500);							/*  */
+//Task taskBlink(takeBlink, 500);							/*  */
 Task taskBattery(takeBattery, 20000);					/* 20 Обновляем заряд батареи */
 //Task taskPower(powerOff, 2400000);						/* 10 минут бездействия и выключаем */
 Task taskConnectWiFi(connectWifi, 20000);				/* Пытаемся соедениться с точкой доступа каждые 60 секунд */
@@ -49,14 +51,14 @@ void setup() {
 	/*while (digitalRead(PWR_SW) == HIGH){
 		delay(100);
 	};*/
-	
+	BLINK = new BlinkClass();
 	SPIFFS.begin();
 	browserServer.begin();
 	Scale.setup(&browserServer);
 	//delay(1000);	
 	takeBattery();
   
-	taskController.add(&taskBlink);
+	taskController.add(BLINK);
 	taskController.add(&taskBattery);
 	taskController.add(&taskWeight);
 	taskController.add(&taskConnectWiFi);
@@ -71,9 +73,9 @@ void setup() {
 	WiFi.setAutoReconnect(true);
 	//WiFi.smartConfigDone();
 	WiFi.mode(WIFI_AP_STA);
-	WiFi.hostname(MY_HOST_NAME);
+	WiFi.hostname(CORE->getHostname());
 	WiFi.softAPConfig(apIP, apIP, netMsk);
-	WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASSWORD);
+	WiFi.softAP(CORE->getApSSID(), SOFT_AP_PASSWORD);
 	delay(500); 
 	
 	connectWifi();
@@ -84,11 +86,12 @@ void setup() {
 /*********************************/
 /* */
 /*********************************/
+/*
 void takeBlink() {
 	bool led = !digitalRead(LED);
 	digitalWrite(LED, led);	
 	taskBlink.setInterval(led ? COUNT_BLINK : COUNT_FLASH);
-}
+}*/
 
 /**/
 void takeBattery(){
@@ -133,14 +136,16 @@ void connectWifi() {
 		goto scan;
 	}
 	connect:
-	if (CORE->getSSID().length()==0){
+	//if (CORE->getSSID().length()==0){
+	if (String(CORE->getSSID()).length()==0){	
 		WiFi.setAutoConnect(false);
 		WiFi.setAutoReconnect(false);
 		taskConnectWiFi.pause();
 		return;
 	}
 	for (int i = 0; i < n; ++i)	{
-		if(WiFi.SSID(i) == CORE->getSSID().c_str()){
+		//if(WiFi.SSID(i) == CORE->getSSID().c_str()){
+		if(WiFi.SSID(i).equals(CORE->getSSID())){	
 			int32_t chan_scan = WiFi.channel(i);
 			WiFi.setAutoConnect(true);
 			WiFi.setAutoReconnect(true);
@@ -149,11 +154,11 @@ void connectWifi() {
 					WiFi.config(lanIp,gateway, netMsk);									// Надо сделать настройки ip адреса
 				}
 			}
-			WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASSWORD, chan_scan); //Устанавливаем канал как роутера
-			WiFi.begin ( CORE->getSSID().c_str(), CORE->getPASS().c_str(),chan_scan/*,BSSID_scan*/);
+			WiFi.softAP(CORE->getApSSID(), SOFT_AP_PASSWORD, chan_scan); //Устанавливаем канал как роутера
+			WiFi.begin ( CORE->getSSID(), CORE->getPASS(),chan_scan/*,BSSID_scan*/);
 			int status = WiFi.waitForConnectResult();
 			if(status == WL_CONNECTED ){
-				NBNS.begin(MY_HOST_NAME);
+				NBNS.begin(CORE->getHostname().c_str());
 			}
 			return;
 		}
@@ -195,11 +200,7 @@ void loop() {
 
 void onStationModeConnected(const WiFiEventStationModeConnected& evt) {
 	taskConnectWiFi.pause();
-	//Serial.println(String(evt.channel));
-	//WiFi.softAPdisconnect();
-	//WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASSWORD, evt.channel); //Устанавливаем канал как роутера
-	COUNT_FLASH = 50;
-	COUNT_BLINK = 3000;
+	BLINK->onRun(bind(&BlinkClass::blinkSTA,BLINK));
 }
 
 void onStationModeDisconnected(const WiFiEventStationModeDisconnected& evt) {
@@ -207,6 +208,5 @@ void onStationModeDisconnected(const WiFiEventStationModeDisconnected& evt) {
 	WiFi.scanDelete();
 	WiFi.scanNetworks(true);
 	taskConnectWiFi.resume();
-	COUNT_FLASH = 500;
-	COUNT_BLINK = 500;
+	BLINK->onRun(bind(&BlinkClass::blinkAP,BLINK));
 }

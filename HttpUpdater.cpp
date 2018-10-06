@@ -57,8 +57,8 @@ void HttpUpdaterClass::handleRequest(AsyncWebServerRequest *request){
 		digitalWrite(2, LOW); //led off
 		if (command == U_SPIFFS){
 			//delay(1000);
-			CORE->saveSettings();
-			Scale.saveDate();
+			CoreMemory.save();
+			//Scale.saveDate();
 			request->redirect("/");
 			return;
 		}
@@ -192,8 +192,8 @@ void HttpUpdaterClass::handleHttpStartUpdate(AsyncWebServerRequest * request){		
 		url += host;
 		t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(url,SPIFFS_VERSION);
 		if (ret == HTTP_UPDATE_OK){
-			CORE->saveSettings();
-			Scale.saveDate();
+			CoreMemory.save();
+			//Scale.saveDate();
 			ret = ESPhttpUpdate.update(url, SKETCH_VERSION);
 		}
 		switch(ret) {

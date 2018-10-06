@@ -2,7 +2,7 @@
 #include "Task.h"
 #include "TaskController.h"
 
-TaskController::TaskController(unsigned long _interval): Task(){
+TaskController::TaskController(unsigned long _interval): Task(_interval){
 	cached_size = 0;
 
 	clear();
