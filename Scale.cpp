@@ -272,8 +272,8 @@ float ScaleClass::forTest(uint32_t h){
 }
 
 void ScaleClass::tare() {
-	long sum = readAverage();
-	setOffset(sum);
+	SetCurrent(read());
+	setOffset(Current());
 }
 
 void ScaleClass::setAverage(unsigned char a){

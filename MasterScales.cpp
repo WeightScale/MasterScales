@@ -190,7 +190,7 @@ void loop() {
 		SlaveScales.setDoTape(false);
 	}*/
 	if (Scale.isSave()){
-		CORE->saveEvent("weight", String(Scale.getSaveValue())+"_kg");
+		CORE->saveEvent("weight", String(Scale.getSaveValue()));
 		Scale.setIsSave(false);
 	}
 	
