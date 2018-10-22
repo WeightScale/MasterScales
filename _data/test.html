@@ -4,184 +4,279 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' />
-    <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate' />
-    <meta http-equiv='Pragma' content='no-cache' />
-    <title>WEB SCALES</title>
-    <link rel='stylesheet' type='text/css' href='global.css'>
-    <link rel='shortcut icon' href='favicon.png' type='image/png'>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>Настройки</title>
+    <link rel="stylesheet" type="text/css" href="global.css">
     <style>
-        img.bat {
-            width: 10px;
-            height: 12px;
-        }
-
-        #w_style {
-            background: #fff;
-            font-size: 80px;
-            font-family: Arial, sans-serif;
-            color: #618ad2;
-            margin-left: auto;
-            margin-right: auto;
+        input:focus {
+            background: #FA6;
+            outline: none;
         }
 
         table {
             width: 100%;
         }
 
-        input {
-            font-size: 20px;
-            text-align: center;
+        input,
+        select {
+            width: 100%;
+            text-align: right;
+            font-size: 18px;
+        }
+
+        input[type=submit] {
+            width: auto;
+        }
+
+        input[type=checkbox] {
+            width: auto;
         }
     </style>
     <script>
-        var w;
+        var d = document;
 
-        function ScalesSocket(h, p, fm, fe) {
-            var host = h;
-            var protocol = p;
-            var timerWeight;
-            var timerSocket;
-            var ws;
-            var startWeightTimeout = function() {
-                clearTimeout(timerWeight);
-                timerWeight = setTimeout(function() {
-                    fe();
-                }, 5000);
-            };
-            this.getWeight = function() {
-                ws.send("{'cmd':'wt'}");
-                startWeightTimeout();
-            };
-            this.openSocket = function() {
-                ws = new WebSocket(host, protocol);
-                ws.onopen = this.getWeight;
-                ws.onclose = function(e) {
-                    clearTimeout(timerWeight);
-                    starSocketTimeout();
-                    fe();
-                };
-                ws.onerror = function(e) {
-                    fe();
-                };
-                ws.onmessage = function(e) {
-                    fm(JSON.parse(e.data));
+        function setOnBlur(ip) {
+            setTimeout(function() {
+                if (d.activeElement === ip) {
+                    ip.onblur = function() {
+                        if (ip.value.length === 0 || !CheckIP(ip)) {
+                            setTimeout(function() {
+                                ip.focus()
+                            }, 0);
+                        } else ip.onblur = null;
+                    }
+                }
+            }, 0)
+        }
+
+        function CheckIP(ip) {
+            ipParts = ip.value.split(".");
+            if (ipParts.length === 4) {
+                for (i = 0; i < 4; i++) {
+                    TheNum = parseInt(ipParts[i]);
+                    if (TheNum >= 0 && TheNum <= 255) {} else break;
+                }
+                if (i === 4) return true;
+            }
+            return false;
+        }
+
+        function GetValue() {
+            var r = new XMLHttpRequest();
+            r.overrideMimeType('application/json');
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        var j = JSON.parse(r.responseText);
+                        for (e in j) {
+                            try {
+                                d.getElementById(e).innerHTML = j[e];
+                            } catch (e) {}
+                        }
+                    }
                 }
             };
-            var starSocketTimeout = function() {
-                clearTimeout(timerSocket);
-                timerSocket = setTimeout(function() {
-                    this.prototype.openSocket();
-                }, 5000);
+            r.open('GET', '/sv', true);
+            r.send(null);
+        }
+
+        function GetSettings() {
+            var r = new XMLHttpRequest();
+            r.overrideMimeType('application/json');
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        try {
+                            var j = JSON.parse(r.responseText);
+                            var s = j.scale;
+                            for (e in s) {
+                                try {
+                                    if (d.getElementById(e).type === 'checkbox') {
+                                        d.getElementById(e).checked = s[e];
+                                    } else d.getElementById(e).value = s[e];
+                                } catch (e) {}
+                            }
+                            var sr = j.server;
+                            for (en in sr) {
+                                try {
+                                    d.getElementById(en).value = sr[en];
+                                } catch (e) {}
+                            }
+                            enableAuthFields(document.getElementById('id_auto'));
+                        } catch (e) {
+                            alert("ОШИБКА " + e.toString());
+                        }
+                    } else {
+                        alert("ДАННЫЕ НАСТРОЕК НЕ НАЙДЕНЫ!!!");
+                    }
+                    d.body.style.visibility = 'visible';
+                    GetValue();
+                }
+            };
+            r.open('GET', '/settings.json', true);
+            r.send(null);
+        }
+
+        function openSDB() {
+            var url = 'https://' + d.getElementById('id_host').value + '/scale.php?code=' + d.getElementById('id_pin').value;
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+
+        function enableAuthFields(check) {
+            if (check.checked) {
+                d.getElementById('id_table_net').style.display = 'none';
+            } else {
+                d.getElementById('id_table_net').style.display = '';
             }
         }
 
-        function go() {
-            document.getElementById('weight').innerHTML = '---';
-            document.getElementById('buttonZero').style.visibility = 'visible';
-        }
-
-        function setZero() {
-            document.getElementById('buttonZero').style.visibility = 'hidden';
-            var request = new XMLHttpRequest();
-            document.getElementById('weight').innerHTML = '...';
-            request.onreadystatechange = function() {
-                if (this.readyState === 4 && this.status === 204) {
-                    document.getElementById('buttonZero').style.visibility = 'visible';
-                    w.getWeight();
-                }
-            };
-            request.open('GET', '/tp', true);
-            request.timeout = 5000;
-            request.ontimeout = function() {
-                go();
-            };
-            request.onerror = function() {
-                go();
-            };
-            request.send(null);
-        }
-        window.onload = function() {
-            onBodyLoad();
-        };
-
-        function onBodyLoad() {
-            w = new ScalesSocket('ws://' + document.location.host + '/ws', ['arduino'], function(e) {
-                if (e.hasOwnProperty('cmd')) {
-                    switch (e.cmd) {
-                        case 'wt':
-                            try {
-                                document.getElementById('weight').innerHTML = e.w;
-                                document.getElementById('mw_id').innerHTML = e.ms.w;
-                                document.getElementById('sw_id').innerHTML = e.sl.w;
-                                document.getElementById('mc_id').innerHTML = e.ms.c + '%';
-                                document.getElementById('sc_id').innerHTML = e.sl.c + '%';
-                                if (e.ms.s && e.sl.s) {
-                                    document.getElementById('w_style').setAttribute('style', 'background: #fff;');
-                                } else {
-                                    document.getElementById('w_style').setAttribute('style', 'background: #C4C4C4;');
-                                }
-                            } catch (e) {
-                                go();
-                            } finally {
-                                w.getWeight();
-                            }
-                            break;
-                        case 'swt':
-                            ob.unshift(e);
-                            if (ob.length > 5 )
-                                ob.pop();
-                            createList('tw_id',ob);
-                            break;
-                        case 'tp':
-                            d.getElementById('b_id').style.visibility = 'visible';
-                            w.getWeight();
-                            break;
+        function formNet(i) {
+            var f = new FormData(d.getElementById(i));
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        var rec = confirm('Перегрузить');
+                        if (rec) {
+                            r.onreadystatechange = null;
+                            r.open('GET', '/rc', true);
+                            r.send(null);
+                        }
+                    } else if (r.status === 400) {
+                        alert('Настройки не изменились');
                     }
                 }
-            }, function() {
-                go();
-                w.openSocket();
-            });
-            w.openSocket();
+            };
+            r.open('POST', '/settings.html', true);
+            r.send(f);
         }
+        window.onload = function() {
+            GetSettings();
+        };
     </script>
 </head>
 
-<body>
-<div align='center'>
-    <table>
-        <tr>
-            <td><img src='scales.png' style='height: 42px;' /></td>
-            <td align='right'>
-                <h3 id='brand_name'>scale.in.ua</h3></td>
-        </tr>
-    </table>
-    <p hidden='hidden' id='dnt'></p>
-</div>
+<body style='visibility: hidden'><a href='/' class='btn btn--s btn--blue'>&lt;</a>&nbsp;&nbsp;<strong>Настройки</strong>
 <hr>
-<div align='right' id='w_style'> <b id='weight'>---</b></div>
-<hr>
-<table>
-    <tr>
-        <td>
-            <h5> <table> <tr> <td>MASTER</td><td align='center' style='width:100px' id='mw_id'></td><td style='width:1%; white-space: nowrap'><img class='bat' src='battery.png' alt='B'/></td><td><h3 id='mc_id' style='display: inline'>--%</h3></td></tr><tr> <td>SLAVE</td><td align='center' id='sw_id'></td><td style='width:1%; white-space: nowrap'><img class='bat' src='battery.png' alt='B'/></td><td><h3 id='sc_id' style='display: inline'>--%</h3></td></tr></table> </h5> </td>
-        <td align='right'><b><a href='javascript:setZero()' id='buttonZero' class='btn btn--s btn--blue'>&lt;0&gt;</a></b></td>
-    </tr>
-</table>
-<hr>
-<table>
-    <tr>
-        <td><a href='/events.html' class='btn btn--m btn--blue'>события</a>
-            <br>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <br/><a href='/settings.html'>настройки</a>
-            <br>
-        </td>
-    </tr>
-</table>
+<fieldset>
+    <details>
+        <summary>Конфигурация сети</summary>
+        <br>
+        <h5 align='left'><b>Точка доступа WiFi роутера</b></h5>
+        <form id='form_id' action='javascript:formNet("form_id")'> Получать IP:
+            <input type='checkbox' id='id_auto' name='auto' onclick='enableAuthFields(this);' />
+            <div id='id_ip'></div>
+            <table id='id_table_net'>
+                <tr>
+                    <td>IP:</td>
+                    <td>
+                        <input id='id_lan_ip' type='text' name='lan_ip' onfocus='setOnBlur(this)' /> </td>
+                </tr>
+                <tr>
+                    <td>ШЛЮЗ:</td>
+                    <td>
+                        <input id='id_gateway' type='text' name='gateway' onfocus='setOnBlur(this)' /> </td>
+                </tr>
+                <tr>
+                    <td>МАСКА:</td>
+                    <td>
+                        <input id='id_subnet' type='text' name='subnet' onfocus='setOnBlur(this)' /> </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>СЕТЬ:</td>
+                    <td>
+                        <input id='id_ssid' name='ssid' placeholder='имя сети'> </td>
+                </tr>
+                <tr>
+                    <td>КЛЮЧ:</td>
+                    <td>
+                        <input id='id_key' type='password' name='key' placeholder='пароль'> </td>
+                </tr>
+                <tr>
+                    <td/>
+                    <td>
+                        <input type='submit' value='СОХРАНИТЬ' /> </td>
+                </tr>
+            </table>
+        </form>
+    </details>
+</fieldset>
+<br/>
+<fieldset style='width: auto'>
+    <details>
+        <summary>Общии настройки</summary>
+        <br>
+        <form id='form_assid_id' action='javascript:formNet("form_assid_id")'>
+            <h5 align='left'><b>Имя собственное</b></h5>
+            <table>
+                <tr>
+                    <td>ИМЯ:</td>
+                    <td>
+                        <input id='id_assid' name='assid'> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type='submit' value='УСТАНОВИТЬ' /> </td>
+                </tr>
+            </table>
+        </form>
+        <hr>
+        <form method='POST'>
+            <h5>Настройки база данных интернет</h5>
+            <table>
+                <tr>
+                    <td>СЕРВЕР:</td>
+                    <td>
+                        <input id='id_host' name='host' placeholder='сервер'> </td>
+                </tr>
+                <tr>
+                    <td>ПИН:</td>
+                    <td>
+                        <input id='id_pin' name='pin' placeholder='пин весов'> </td>
+                </tr>
+                <tr>
+                    <td><a href='javascript:openSDB();'>открыть</a></td>
+                    <td>
+                        <input id='id_submit_code' type='submit' value='СОХРАНИТЬ' /> </td>
+                </tr>
+            </table>
+        </form>
+        <hr>
+        <form method='POST'>
+            <h5>Доступ к настройкам</h5>
+            <table>
+                <tr>
+                    <td>ИМЯ:</td>
+                    <td>
+                        <input id='id_n_admin' name='n_admin' placeholder='имя админ'> </td>
+                </tr>
+                <tr>
+                    <td>ПАРОЛЬ:</td>
+                    <td>
+                        <input type='password' id='id_p_admin' name='p_admin' placeholder='пароль админ'> </td>
+                </tr>
+                <tr>
+                    <td/>
+                    <td>
+                        <input type='submit' value='СОХРАНИТЬ' /> </td>
+                </tr>
+            </table>
+        </form>
+    </details>
+</fieldset>
+<br/>
+<fieldset>
+    <details>
+        <summary>Информация</summary>
+        <br><span style='font-size: small; font-weight: bold'> <table> <tr> <td>Имя хоста:</td><td align='right' id='id_local_host'/> </tr></table> <hr> <h5 align='left'><b>Точка доступа весов</b></h5> <table> <tr> <td id='id_ap_ssid'/> <td align='right' id='id_ap_ip'/> </tr></table> <hr> <table> <tr> <td>MAC:</td><td align='right' id='id_mac'/> </tr></table> <hr> <table> <tr> <td>Пломба:</td><td align='right'><div id='sl_id'></div></td></tr></table> </span>
+        <hr><a href='/calibr.html'>калибровка</a>
+        <hr><a href='/rssi.html'>сигнал</a> </details>
+</fieldset>
 <hr>
 <footer align='center'>2018 © Powered by www.scale.in.ua</footer>
 </body>

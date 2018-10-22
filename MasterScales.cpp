@@ -25,8 +25,9 @@ void onStationModeDisconnected(const WiFiEventStationModeDisconnected& evt);
 //void takeBlink();
 void takeBattery();
 void takeWeight();
-void powerSwitchInterrupt();
+//void powerSwitchInterrupt();
 void connectWifi();
+void prinScanResult(int networksFound);
 //
 TaskController taskController = TaskController();		/*  */
 //Task taskBlink(takeBlink, 500);							/*  */
@@ -61,7 +62,7 @@ void setup() {
 	taskController.add(BLINK);
 	taskController.add(&taskBattery);
 	taskController.add(&taskWeight);
-	taskController.add(&taskConnectWiFi);
+	
 	//taskController.add(&taskPower);	
 
 	stationModeConnectedHandler = WiFi.onStationModeConnected(&onStationModeConnected);	
@@ -77,7 +78,7 @@ void setup() {
 	WiFi.softAPConfig(apIP, apIP, netMsk);
 	WiFi.softAP(CORE->getApSSID(), SOFT_AP_PASSWORD);
 	delay(500); 
-	
+	taskController.add(&taskConnectWiFi);
 	connectWifi();
 	 
 	//CORE.saveEvent("power", "ON");
@@ -122,8 +123,42 @@ void powerSwitchInterrupt(){
 }*/
 
 void connectWifi() {
+	taskConnectWiFi.pause();
+	if (String(CORE->getSSID()).length() == 0) {
+		WiFi.setAutoConnect(false);
+		WiFi.setAutoReconnect(false);
+		return;
+	}
+	if (WiFi.SSID().equals(CORE->getSSID())) {
+		WiFi.begin();
+		return;
+	}
 	WiFi.disconnect(false);
 	/*!  */
+	int n = WiFi.scanComplete();
+	if (n == -2) {
+		WiFi.scanNetworksAsync(prinScanResult, true);
+	}else if (n > 0) {
+		prinScanResult(n);
+	}
+}
+
+void prinScanResult(int networksFound) {
+	for (int i = 0; i < networksFound; ++i) {
+		if (WiFi.SSID(i).equals(CORE->getSSID())) {
+			WiFi.persistent(true);
+			WiFi.begin(CORE->getSSID(), CORE->getPASS());
+			return;
+		}
+	}
+	WiFi.scanDelete();
+	taskConnectWiFi.resume();
+}
+
+/*
+void connectWifi() {
+	WiFi.disconnect(false);
+	/ *!  * /
 	int n = WiFi.scanComplete();
 	if(n == -2){
 		n = WiFi.scanNetworks();
@@ -155,7 +190,7 @@ void connectWifi() {
 				}
 			}
 			WiFi.softAP(CORE->getApSSID(), SOFT_AP_PASSWORD, chan_scan); //Устанавливаем канал как роутера
-			WiFi.begin ( CORE->getSSID(), CORE->getPASS(),chan_scan/*,BSSID_scan*/);
+			WiFi.begin ( CORE->getSSID(), CORE->getPASS(),chan_scan/ *,BSSID_scan* /);
 			int status = WiFi.waitForConnectResult();
 			if(status == WL_CONNECTED ){
 				NBNS.begin(CORE->getHostname().c_str());
@@ -166,7 +201,7 @@ void connectWifi() {
 	scan:
 	WiFi.scanDelete();
 	WiFi.scanNetworks(true);
-}
+}*/
 
 void loop() {
 	taskController.run();	
@@ -200,13 +235,17 @@ void loop() {
 
 void onStationModeConnected(const WiFiEventStationModeConnected& evt) {
 	taskConnectWiFi.pause();
+	WiFi.softAP(CORE->getApSSID(), SOFT_AP_PASSWORD, evt.channel); //Устанавливаем канал как роутера	
+	WiFi.setAutoConnect(true);
+	WiFi.setAutoReconnect(true);
+	NBNS.begin(CORE->getHostname().c_str());
 	BLINK->onRun(bind(&BlinkClass::blinkSTA,BLINK));
 }
 
 void onStationModeDisconnected(const WiFiEventStationModeDisconnected& evt) {
 	//Serial.println("DisconnectStation");
-	WiFi.scanDelete();
-	WiFi.scanNetworks(true);
+	//WiFi.scanDelete();
+	//WiFi.scanNetworks(true);
 	taskConnectWiFi.resume();
 	BLINK->onRun(bind(&BlinkClass::blinkAP,BLINK));
 }

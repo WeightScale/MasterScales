@@ -136,7 +136,7 @@ void ScaleClass::fetchWeight(){
 	//float w = Scale.forTest(ESP.getFreeHeap());
 	_weight = getWeight();
 	formatValue(_weight,_buffer);
-	detectStable(_weight+SlaveScales.getWeigt());
+	detectStable(_weight+SlaveScales.getWeight());
 	//_weight = w;
 	//ws.textAll(String("{\"w\":\""+String(Scale.getBuffer())+"\",\"c\":"+String(CORE.getCharge())+",\"s\":"+String(Scale.getStableWeight())+"}"));
 	//_weight = String(buffer).toFloat();
@@ -295,32 +295,55 @@ void ScaleClass::formatValue(float value, char* string){
 }
 
 /* */
-void ScaleClass::detectStable(float w){
-		static long int time,time1;
-		static float weight_temp;
-		static unsigned char stable_num;
-		if (weight_temp == w) {
-			if (stable_num > STABLE_NUM_MAX) {
-				if (!stableWeight){					
-					stableWeight = true;
-					if (SlaveScales.getStable()){
-						//w + SlaveScales.getWeigt();
-						if(fabs(w) > _stable_step && time > (time1 + 6000)){
+void ScaleClass::detectStable(float w){	
+	static unsigned char stable_num;	
+	if (saveWeight.value != w) {		
+		stable_num = 0;
+		stableWeight = false;
+		saveWeight.value = w;
+		return;	
+	}
+	stable_num++;
+	if (stable_num < STABLE_NUM_MAX) {
+		return;	
+	}
+	
+	if (stableWeight){
+		return;
+	}
+	stableWeight = true;
+	if (!SlaveScales.getStable()){
+		return;
+	}
+	if (millis() < saveWeight.time ){
+		return;
+	}
+	if(fabs(w) > _stable_step){
+		saveWeight.isSave = true;
+		saveWeight.time = millis() + 10000;
+	}
+	
+	/*if (saveWeight.value == w) {
+		if (stable_num > STABLE_NUM_MAX) {
+			if (!stableWeight){	
+				if (SlaveScales.getStable()){											
+					if (millis() > saveWeight.time ){
+						if(fabs(w) > _stable_step){
 							saveWeight.isSave = true;
-							saveWeight.value = w;
-							time1 = millis();
+							saveWeight.time = millis() + 10000;
 						}
 					}
 				}
-				return;
+				stableWeight = true;					
 			}
-			stable_num++;
-		} else {
-			stable_num = 0;
-			stableWeight = false;
-			time = millis();
+			return;
 		}
-		weight_temp = w;
+		stable_num++;
+	} else {
+		stable_num = 0;
+		stableWeight = false;
+		saveWeight.value = w;
+	}*/
 }
 
 void ScaleClass::handleWeight(AsyncWebServerRequest * request){

@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <RootNamespace>
+    </RootNamespace>
+    <ProjectName>MasterScales</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>
+    </PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>
+    </PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>
+    </PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>
+    </PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\MasterScales;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\ESP8266WiFi\src;$(ProjectDir)..\..\..\..\libraries\ESPAsyncTCP-master\src;$(ProjectDir)..\..\..\..\libraries\ESPAsyncWebServer-master\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\DNSServer\src;$(ProjectDir)..\..\..\..\libraries\ArduinoJson\src;$(ProjectDir)..\..\..\..\libraries\ESP_EEPROM\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\ESP8266HTTPClient\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\Hash\src;$(ProjectDir)..\..\..\..\libraries\Rtc_by_Makuna\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\Wire;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\ESP8266HTTPUpdateServer\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\ESP8266httpUpdate\src;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries\ESP8266WebServer\src;$(ProjectDir)..\..\..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\libraries;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\libraries;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\cores\esp8266;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\cores\esp8266\libb64;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\cores\esp8266\spiffs;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\cores\esp8266\umm_malloc;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\variants\generic;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\tools\sdk\include;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\tools\sdk\lwip2\include;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\tools\sdk\libc\xtensa-lx106-elf\include;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include\c++\4.8.2;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include\c++\4.8.2\xtensa-lx106-elf;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\xtensa-lx106-elf\include;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2\lib\gcc\xtensa-lx106-elf\4.8.2\include;$(ProjectDir)..\..\..\..\..\..\AppData\Local\arduino15\packages\esp8266\hardware\esp8266\2.4.1\tools\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.MasterScales.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>__ESP8266_ESp8266__;__ESP8266_ESP8266__;__ets__;ICACHE_FLASH;F_CPU=80000000L;LWIP_OPEN_SRC;TCP_MSS=536;ARDUINO=10803;ARDUINO_ESP8266_GENERIC;ARDUINO_ARCH_ESP8266;LED_BUILTIN=2;ESP8266;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="VisualMicro" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MasterScales.ino">
+      <FileType>CppCode</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BrowserServer.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="CoreMemory.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="DateTime.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="ESP8266NetBIOS.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="HttpUpdater.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="HX711.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="master_config.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Page.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Scale.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="SlaveScales.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="TaskController.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="tools.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClInclude Include="__vm\.MasterScales.vsarduino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BrowserServer.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CoreMemory.cpp" />
+    <ClCompile Include="DateTime.cpp" />
+    <ClCompile Include="ESP8266NetBIOS.cpp" />
+    <ClCompile Include="HttpUpdater.cpp" />
+    <ClCompile Include="MasterScales.cpp" />
+    <ClCompile Include="Scale.cpp" />
+    <ClCompile Include="SlaveScales.cpp" />
+    <ClCompile Include="Task.cpp" />
+    <ClCompile Include="TaskController.cpp" />
+    <ClCompile Include="tools.cpp" />
+  </ItemGroup>
+  <PropertyGroup>
+    <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties custom_esp8266_generic_FlashSize="4M1M" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -53,7 +53,7 @@ class SlaveScalesClass : public AsyncWebSocket{
 		bool doValueUpdate(AsyncWebServerRequest * request);				
 		uint8_t getCharge(){return _charge;};
 		
-		float getWeigt(){return _weight;};
+		float getWeight(){return _weight;};
 		void setWeight(float w){_weight = w;};
 	
 		void setStable(bool s){_stableWeight = s;};

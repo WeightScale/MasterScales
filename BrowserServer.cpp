@@ -67,7 +67,7 @@ void BrowserServerClass::init(){
 		JsonObject& slave = json.createNestedObject("sl");
 		
 		char b[10];
-		float f = Scale.getTest() + SlaveScales.getWeigt();
+		float f = Scale.getTest() + SlaveScales.getWeight();
 		Scale.formatValue(f,b);
 		String str = SlaveScales.isConnected()?String(b):String("slave???");
 		json["w"] = str;
@@ -293,7 +293,7 @@ void handleScaleProp(AsyncWebServerRequest * request){
 	JsonObject& root = response->getRoot();
 	root["id_date"] = getDateTime();
 	root["id_local_host"] = WiFi.hostname();
-	root["id_ap_ssid"] = String(WiFi.softAPSSID());
+	root["id_ap_ssid"] = String(CORE->getApSSID());
 	root["id_ap_ip"] = toStringIp(WiFi.softAPIP());
 	root["id_ip"] = toStringIp(WiFi.localIP());
 	root["sl_id"] = String(Scale.getSeal());
@@ -344,7 +344,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 			JsonObject& slave = json.createNestedObject("sl");
 			
 			char b[10];
-			float f = Scale.getTest() + SlaveScales.getWeigt();
+			float f = Scale.getTest() + SlaveScales.getWeight();
 			Scale.formatValue(f,b);
 			String str = SlaveScales.isConnected()?String(b):String("slave???");
 			json["w"] = str;

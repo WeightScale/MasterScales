@@ -45,6 +45,7 @@ typedef struct {
 typedef struct{
 	bool isSave;
 	float value;
+	long int time;
 }t_save_value;
 
 class BrowserServerClass;
