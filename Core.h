@@ -73,8 +73,8 @@ class CoreClass : public AsyncWebHandler{
 	String _password;
 	bool _authenticated;
 	
-	bool saveAuth();
-	bool loadAuth();		
+	//bool saveAuth();
+	//bool loadAuth();		
 	//bool _downloadSettings();
 			
 
@@ -100,7 +100,7 @@ class CoreClass : public AsyncWebHandler{
 		/*#if! HTML_PROGMEM
 			void saveValueSettingsHttp(AsyncWebServerRequest*);
 		#endif*/			
-		void handleSetAccessPoint(AsyncWebServerRequest*);	
+		//void handleSetAccessPoint(AsyncWebServerRequest*);	
 		String getHash(const int, const String&, const String&, const String&);
 		int getPin(){return _settings->hostPin;};
 				
@@ -146,7 +146,7 @@ class BlinkClass : public Task {
 		if (clk < 6){
 			led ? _flash = 70 : _flash = 40;
 			clk++;
-			}else{
+		}else{
 			_flash = 2000;
 			digitalWrite(LED, HIGH);
 			clk = 0;

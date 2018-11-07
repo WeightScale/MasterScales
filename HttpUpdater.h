@@ -6,10 +6,7 @@
 
 const char successResponse[] /*PROGMEM*/ = R"(<META http-equiv='refresh' content='15;URL=/'>Обновление успешно! Перегрузка...)";
 
-const char serverIndex[] /*PROGMEM*/ = R"(<html><body><form method='POST' action='' enctype='multipart/form-data'>
-										<input type='file' name='update'>
-										<input type='submit' value='Update'>
-										</form></body></html>)";
+const char serverIndex[] /*PROGMEM*/ = R"(<html><body><form method='POST' action='' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form></body></html>)";
 
 class HttpUpdaterClass: public AsyncWebHandler{
 	public:

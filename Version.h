@@ -1,7 +1,7 @@
 #ifndef _VERSION_h
 #define _VERSION_h
 
-#define SKETCH_VERSION "web_travers_master_scales_expower.004"
+#define SKETCH_VERSION "web_travers_master_scales_expower.006"
 #define SPIFFS_VERSION "web_travers_master_scales_expower.001"
 
 /*

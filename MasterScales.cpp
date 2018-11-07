@@ -70,6 +70,11 @@ void setup() {
   
 	//ESP.eraseConfig();
 	WiFi.persistent(false);
+	if (!CORE->isAuto()) {
+		if (lanIp.fromString(CORE->getLanIp()) && gateway.fromString(CORE->getGateway())) {
+			WiFi.config(lanIp, gateway, netMsk);									// Надо сделать настройки ip адреса
+		}
+	}
 	WiFi.setAutoConnect(true);
 	WiFi.setAutoReconnect(true);
 	//WiFi.smartConfigDone();

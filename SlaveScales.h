@@ -11,6 +11,8 @@
 	#include "WProgram.h"
 #endif
 
+#define TIMEOUT_SLAVE_CONNECT 7000		/* Время проверки в течении которого должны прийти данные от подчиненного для функции isConnect() */
+
 class SlaveScalesClass : public AsyncWebSocket{
 	protected:
 		uint32 _clientId;
@@ -62,7 +64,7 @@ class SlaveScalesClass : public AsyncWebSocket{
 		void setDoTape(float t){_doTape = t;};
 		bool isTape(){return _doTape;};
 		bool isConnected(){
-			if((_time_connect + 5000)> millis())
+			if((_time_connect + TIMEOUT_SLAVE_CONNECT)> millis())
 				return true;	
 			return false;
 		};

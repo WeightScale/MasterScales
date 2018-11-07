@@ -298,13 +298,14 @@ void ScaleClass::formatValue(float value, char* string){
 void ScaleClass::detectStable(float w){	
 	static unsigned char stable_num;	
 	if (saveWeight.value != w) {		
-		stable_num = 0;
+		stable_num = STABLE_NUM_MAX;
 		stableWeight = false;
 		saveWeight.value = w;
 		return;	
 	}
-	stable_num++;
-	if (stable_num < STABLE_NUM_MAX) {
+	
+	if (stable_num) {
+		stable_num--;
 		return;	
 	}
 	
